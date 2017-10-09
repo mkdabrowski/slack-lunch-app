@@ -9,7 +9,6 @@
   "author": "Marcin",
   "dependencies": {
     "@slack/client": "^3.14.0",
-    "cheerio": "^1.0.0-rc.2",
-    "request": "^2.83.0"
+    "fbgraph": "^1.4.1"
   }
 }

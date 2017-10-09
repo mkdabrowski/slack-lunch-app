@@ -1,32 +1,31 @@
 var IncomingWebhook = require('@slack/client').IncomingWebhook;
-var request = require('request');
-var cheerio = require('cheerio');
+var facebook = require('fbGraph');
 
 var slackUrl = process.env.SLACK_WEBHOOK_URL || '';
+var appId = process.env.FACEBOOK_APP_ID || '';
+var appSecret = process.env.FACEBOOK_APP_SECRET || '';
 var args = process.argv.slice(2);
-var facebookUrl = args[0] || '';
+var facebookPage = args[0] || '';
 var username = args[1] || 'LunchApp';
 var emoji = args[2] || ':stew:';
 
 var webhook = new IncomingWebhook(slackUrl, { username: username, iconEmoji: emoji });
 
-request(facebookUrl, { headers: { 'user-agent': 'curl/7.47.0', 'accept-language': 'en-US,en', 'accept': '*/*' } }, 
-	function(error, response, html) {
-		if(!error) {
-			var $ = cheerio.load(html);
-			var image = $('.mtm .uiScaledImageContainer img.img').first();
-			var text = image.closest('.fbUserStory').find('.userContent p').text();
-			var imageUrl = image.attr('src');
-			webhook.send({
-				"attachments": [{
-					"color": "#3b5998",
-					"author_name": username,
-					"author_link": facebookUrl,
-					"author_icon": "https://www.facebook.com/favicon.ico",
-					"image_url": imageUrl,
-					"text": text
-				}]
-			});
-        	}
-	}
-);
+facebook.setAccessToken(appId + '|' + appSecret);
+facebook.get(facebookPage + '/posts', { fields: 'full_picture,message,permalink_url,from,created_time', limit: 1 }, function(err, res){
+	if(err) return;
+
+	var attachments = res.data.map(function(post){
+		return {
+			"color": "#3b5998",
+			"author_name": post.from.name,
+			"author_link": post.permalink_url,
+			"author_icon": "https://www.facebook.com/favicon.ico",
+			"image_url": post.full_picture,
+			"text": post.message,
+			"ts": Math.floor(Date.parse(post.created_time) / 1000)
+		}
+	});
+	webhook.send({attachments: attachments});
+	console.log(attachments);
+});

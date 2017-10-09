@@ -4,7 +4,7 @@ Simple app which allow to get latest post with a photo from public Facebook page
 
 Usage:
 
-`node index.js <facebookUrl> <username> <emoji>`
+`node index.js <facebookPage> <username> <emoji>`
 
-Set `SLACK_WEBHOOK_URL` environment variable to your Webhook URL.
+Set `SLACK_WEBHOOK_URL` environment variable to your Webhook URL, and set `FACEBOOK_APP_ID, FACEBOOK_APP_SECRET` accordingly.
 
