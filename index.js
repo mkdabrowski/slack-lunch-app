@@ -1,5 +1,5 @@
 var IncomingWebhook = require('@slack/client').IncomingWebhook;
-var facebook = require('fbGraph');
+var facebook = require('fbgraph');
 
 var slackUrl = process.env.SLACK_WEBHOOK_URL || '';
 var appId = process.env.FACEBOOK_APP_ID || '';
