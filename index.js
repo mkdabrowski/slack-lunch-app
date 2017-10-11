@@ -6,13 +6,14 @@ var appId = process.env.FACEBOOK_APP_ID || '';
 var appSecret = process.env.FACEBOOK_APP_SECRET || '';
 var args = process.argv.slice(2);
 var facebookPage = args[0] || '';
-var username = args[1] || 'LunchApp';
-var emoji = args[2] || ':stew:';
+var since = args[1] || '-16 hours';
+var username = args[2] || 'LunchApp';
+var emoji = args[3] || ':stew:';
 
 var webhook = new IncomingWebhook(slackUrl, { username: username, iconEmoji: emoji });
 
 facebook.setAccessToken(appId + '|' + appSecret);
-facebook.get(facebookPage + '/posts', { fields: 'full_picture,message,permalink_url,from,created_time', limit: 1 }, function(err, res){
+facebook.get(facebookPage + '/posts', { fields: 'full_picture,message,permalink_url,from,created_time', since: since }, function(err, res){
 	if(err) return;
 
 	var attachments = res.data.map(function(post){
